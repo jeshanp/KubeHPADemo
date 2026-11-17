@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: msg-deployment  # Name of the Deployment to differentiate from other deployments
+  labels:
+    app: message-app    # App label for the Deployment to group within the same application
+spec:
+  replicas: 2 # Number of desired Pods to run for this Deployment
+  selector:
+    matchLabels:
+      app: message-app  # Selector to match Pods with the same label for this Deployment
+  template:
+    metadata:
+      labels:
+        app: message-app  # Labels for the Pods created by this Deployment to match the selector
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100 # 100 means pod will prefer to be scheduled on a node that does not have a pod with the same label
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: message-app # Match Pods with the same label to avoid scheduling on the same node
+                topologyKey: kubernetes.io/hostname # Use the hostname of node to determine pod is already running on that node
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80 # Expose port 80 for container (declarative, does not actually open the port on the host)
+          resources: # Resource requests and limits for the container, allows HPA to scale based resource usage
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
