@@ -1,0 +1,18 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: message-app-hpa # Name of the Horizontal Pod Autoscaler to differentiate from other HPAs
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment # The kind of resource to scale (Deployment in this case)
+    name: msg-deployment # Name of the Deployment to scale (must match the name of the Deployment defined in deployment.yaml)
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu # The resource to monitor for scaling (CPU in this case)
+        target:
+          type: Utilization # The type of target for the metric (Utilization means we want to scale based on CPU usage percentage)
+          averageUtilization: 50 # 50% average CPU utilization across all Pods in the Deployment will trigger scaling
