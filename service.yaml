@@ -1,0 +1,15 @@
+apiVersion: v1               # Kubernetes API version
+kind: Service                # Object type (Service)
+metadata:                    # Object metadata and identification
+  name: msg-svc              # Name of the Service
+spec:                        # Service specification and configuration
+  selector:                  # Selects Pods to route traffic to
+    app: message-app         # Must match labels on your Pod
+  ports:                     # Ports exposed by the Service
+  - protocol: TCP            # Network protocol (TCP/UDP)
+    port: 80                 # Port exposed by the Service itself
+    targetPort: 80           # Port on the Pod to forward traffic to
+    nodePort: 30080          # Port on the Node to expose the Service
+  type: NodePort             # Service type (ClusterIP makes it internal-only, NodePort exposes it externally, LoadBalancer provisions a cloud load balancer)
+
+  
